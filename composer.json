@@ -1,0 +1,33 @@
+{
+    "name": "vjik/php-enum",
+    "description": "PHP Enum implementation",
+    "version": "1.0.0",
+    "type": "library",
+    "keywords": [
+        "php",
+        "enum"
+    ],
+    "license": "MIT",
+    "support": {
+        "issues": "https://github.com/vjik/php-enum/issues",
+        "source": "https://github.com/vjik/php-enum"
+    },
+    "authors": [
+        {
+            "name": "Sergey Predvoditelev",
+            "email": "sergey.predvoditelev@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "vjik\\enum\\": ""
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8",
+        "yiisoft/yii2-coding-standards": "2.*"
+    },
+    "require": {
+        "php": ">=5.4.0"
+    }
+}
