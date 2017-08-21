@@ -93,4 +93,13 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
             WithName::BAR,
         ], WithName::toValues());
     }
+
+
+    public function testToObjects()
+    {
+        $this->assertEquals([
+            WithName::FOO => new WithName(WithName::FOO),
+            WithName::BAR => new WithName(WithName::BAR),
+        ], WithName::toObjects());
+    }
 }

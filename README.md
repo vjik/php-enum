@@ -5,7 +5,7 @@
 - Поддержка [дополнительных данных](#extradata) для значений.
 - Поддержка [геттеров](#getters).
 - Поддержка [фильтрации](#filtering). 
-- Вспомогательные функции ([`toValues`](#toValues), [`toList`](#toList), [`toArray`](#toArray), [`isValid`](#isValid)).
+- Вспомогательные функции ([`toValues`](#toValues), [`toList`](#toList), [`toArray`](#toArray), [`toObjects`](#toObjects), [`isValid`](#isValid)).
 
 ## Установка
 
@@ -129,6 +129,17 @@ Status::toArray();
 Status::toArray(['priority' => 20]); // ['publish' => 'Опубликован']
 ```
 
+## <a name="toObjects"></a>Массив объектов `toObjects`
+
+Возвращает массив вида:
+
+```php
+[
+    $value => Enum,
+    …
+]
+```
+
 ## <a name="isValid"></a>Проверка значения `isValid`
 
 Проверяет, существует ли значение в перечисляемом типе. Поддерживает [фильтрацию](#filtering).
@@ -141,7 +152,7 @@ Status::isValid('publish', [['<', 'priority', 5]]); // false
 
 ## <a name="filtering"></a>Фильтрация 
 
-Методы [`toValues`](#toValues), [`toList`](#toList), [`toArray`](#toArray), [`isValid`](#isValid) поддерживают фильтрацию. 
+Методы [`toValues`](#toValues), [`toList`](#toList), [`toArray`](#toArray), [`toObjects`](#toObjects), [`isValid`](#isValid) поддерживают фильтрацию. 
 
 Фильтр передаётся в виде массива:
 

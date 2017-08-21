@@ -175,6 +175,23 @@ abstract class Enum
 
 
     /**
+     * Все доступные значения в виде объектов
+     *
+     * @param array $filter
+     *
+     * @return array
+     */
+    public static function toObjects(array $filter = [])
+    {
+        $objects = [];
+        foreach (static::toValues($filter) as $id) {
+            $objects[$id] = new static($id);
+        }
+        return $objects;
+    }
+
+
+    /**
      * @param $name
      *
      * @return mixed

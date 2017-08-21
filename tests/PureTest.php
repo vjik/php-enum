@@ -108,4 +108,15 @@ class PureTest extends \PHPUnit_Framework_TestCase
             Pure::TWO,
         ], Pure::toValues());
     }
+
+
+    public function testToObjects()
+    {
+        $this->assertEquals([
+            Pure::FOO => new Pure(Pure::FOO),
+            Pure::BAR => new Pure(Pure::BAR),
+            Pure::ONE => new Pure(Pure::ONE),
+            Pure::TWO => new Pure(Pure::TWO),
+        ], Pure::toObjects());
+    }
 }

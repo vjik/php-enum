@@ -113,6 +113,17 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
     }
 
 
+    public function testToObjects()
+    {
+        $this->assertEquals([
+            WithData::ONE => new WithData(WithData::ONE),
+            WithData::TWO => new WithData(WithData::TWO),
+            WithData::THREE => new WithData(WithData::THREE),
+            WithData::ONE2 => new WithData(WithData::ONE2),
+        ], WithData::toObjects());
+    }
+
+
     /**
      * @dataProvider filterProvider
      */
