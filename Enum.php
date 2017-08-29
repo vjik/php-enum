@@ -71,23 +71,22 @@ abstract class Enum
     {
         $class = get_called_class();
         if (!array_key_exists($class, static::$_cache)) {
+            $reflection = new \ReflectionClass($class);
             if (is_callable([$class, 'items'])) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 $items = $class::items();
+                array_walk($items, function (&$item) {
+                    $item = is_array($item) ? $item : ['name' => $item];
+                });
             } else {
-                $items = [];
-                $reflection = new \ReflectionClass($class);
-                foreach ($reflection->getConstants() as $constant) {
-                    $items[$constant] = $constant;
-                }
+                $items = array_fill_keys($reflection->getConstants(), []);
             }
-            array_walk($items, function (&$item, $value) {
-                $item = is_array($item) ? $item : ['name' => $item];
-                if (!isset($item['name'])) {
-                    $item['name'] = $value;
+            foreach ($reflection->getConstants() as $constant) {
+                if (!isset($items[$constant]['name'])) {
+                    $items[$constant]['name'] = $constant;
                 }
-                $item['value'] = $value;
-            });
+                $items[$constant]['value'] = $constant;
+            }
             static::$_cache[$class] = $items;
         }
         $items = array_filter(static::$_cache[$class], function ($item) use ($filter) {
@@ -153,7 +152,11 @@ abstract class Enum
      */
     public static function toValues(array $filter = [])
     {
-        return array_keys(static::toArray($filter));
+        $values = [];
+        foreach (static::toArray($filter) as $item) {
+            $values[] = $item['value'];
+        }
+        return $values;
     }
 
 
