@@ -129,6 +129,10 @@ abstract class Enum
                                 return false;
                             }
                             break;
+
+                        case 'in':
+                            return in_array($item[$key], $value, true);
+                            break;
                     }
                 } else {
                     $value = $filterItem;
