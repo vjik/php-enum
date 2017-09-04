@@ -19,15 +19,15 @@ class EnumTest extends \PHPUnit_Framework_TestCase
         $this->withData = new WithData(WithData::ONE);
     }
 
-    public function testGetValue()
+    public function testGetId()
     {
-        $this->assertEquals(Pure::FOO, $this->pure->value);
+        $this->assertEquals(Pure::FOO, $this->pure->id);
         $this->assertEquals((string)Pure::FOO, $this->pure);
 
-        $this->assertEquals(WithName::FOO, $this->withName->value);
+        $this->assertEquals(WithName::FOO, $this->withName->id);
         $this->assertEquals((string)WithName::FOO, $this->withName);
 
-        $this->assertEquals(WithData::ONE, $this->withData->value);
+        $this->assertEquals(WithData::ONE, $this->withData->id);
         $this->assertEquals((string)WithData::ONE, $this->withData);
     }
 

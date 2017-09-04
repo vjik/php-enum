@@ -5,7 +5,7 @@
 - Поддержка [дополнительных данных](#extradata) для значений.
 - Поддержка [геттеров](#getters).
 - Поддержка [фильтрации](#filtering). 
-- Вспомогательные функции ([`toValues`](#toValues), [`toList`](#toList), [`toArray`](#toArray), [`toObjects`](#toObjects), [`isValid`](#isValid)).
+- Вспомогательные функции ([`toIds`](#toIds), [`toList`](#toList), [`toArray`](#toArray), [`toObjects`](#toObjects), [`isValid`](#isValid)).
 
 ## Установка
 
@@ -87,18 +87,18 @@ class Status extends Enum
 $status = new Status(Status::DRAFT);
 ```
 
-## <a name="toValues"></a>Список значений `toValues`
+## <a name="toIds"></a>Список значений `toIds`
 
 Возвращает массив значений объекта. Поддерживает [фильтрацию](#filtering). 
 
 ```php
-Status::toValues(); // ['draft', 'publish']
-Status::toValues(['priority' => 20]); // ['publish']
+Status::toIds(); // ['draft', 'publish']
+Status::toIds(['priority' => 20]); // ['publish']
 ```
 
 ## <a name="toList"></a>Список с названиями `toList`
 
-Возвращает массив вида `$value => $name`. Поддерживает [фильтрацию](#filtering).
+Возвращает массив вида `$id => $name`. Поддерживает [фильтрацию](#filtering).
 
 ```php
 Status::toList(); // ['draft' => 'Черновик', 'publish' => 'Опубликован']
@@ -111,9 +111,9 @@ Status::toList(['priority' => 20]); // ['publish' => 'Опубликован']
 
 ```php
 [
-    $value => [
+    $id => [
+        'id' => $id,
         'name' => $name,
-        'value' => $value,
         'param1' => $param1,
         'param2' => $param2,
         …
@@ -135,7 +135,7 @@ Status::toArray(['priority' => 20]); // ['publish' => 'Опубликован']
 
 ```php
 [
-    $value => Enum,
+    $id => Enum,
     …
 ]
 ```
@@ -152,7 +152,7 @@ Status::isValid('publish', [['<', 'priority', 5]]); // false
 
 ## <a name="filtering"></a>Фильтрация 
 
-Методы [`toValues`](#toValues), [`toList`](#toList), [`toArray`](#toArray), [`toObjects`](#toObjects), [`isValid`](#isValid) поддерживают фильтрацию. 
+Методы [`toIds`](#toIds), [`toList`](#toList), [`toArray`](#toArray), [`toObjects`](#toObjects), [`isValid`](#isValid) поддерживают фильтрацию. 
 
 Фильтр передаётся в виде массива:
 
@@ -173,7 +173,7 @@ Status::isValid('publish', [['<', 'priority', 5]]); // false
 ```php
 [
    Status::isValid('publish', [['in', 'priority', [5, 10]]]); 
-   Status::isValid('closed', [['in', 'value', ['publish', 'closed', 'draft']]]); 
+   Status::isValid('closed', [['in', 'id', ['publish', 'closed', 'draft']]]); 
 ]
 ```
 

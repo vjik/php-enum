@@ -16,19 +16,19 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @dataProvider invalidValueProvider
+     * @dataProvider invalidIdProvider
      * @expectedException UnexpectedValueException
      */
-    public function testCreateWithInvalidValue($value)
+    public function testCreateWithInvalidId($id)
     {
-        new WithName($value);
+        new WithName($id);
     }
 
 
     /**
      * @return array
      */
-    public function invalidValueProvider()
+    public function invalidIdProvider()
     {
         return [
             [0],
@@ -40,18 +40,18 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @dataProvider isValueProvider
+     * @dataProvider isIdProvider
      */
-    public function testIsValid($value, $isValid)
+    public function testIsValid($id, $isValid)
     {
-        $this->assertSame(WithName::isValid($value), $isValid);
+        $this->assertSame(WithName::isValid($id), $isValid);
     }
 
 
     /**
      * @return array
      */
-    public function isValueProvider()
+    public function isIdProvider()
     {
         return [
             [0, false],
@@ -67,11 +67,11 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([
             WithName::FOO => [
                 'name' => 'Foo Name',
-                'value' => WithName::FOO,
+                'id' => WithName::FOO,
             ],
             WithName::BAR => [
                 'name' => 'Bar Name',
-                'value' => WithName::BAR,
+                'id' => WithName::BAR,
             ],
         ], WithName::toArray());
     }
@@ -86,12 +86,12 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testToValues()
+    public function testToIds()
     {
         $this->assertSame([
             WithName::FOO,
             WithName::BAR,
-        ], WithName::toValues());
+        ], WithName::toIds());
     }
 
 

@@ -16,19 +16,19 @@ class PureTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @dataProvider invalidValueProvider
+     * @dataProvider invalidIdProvider
      * @expectedException UnexpectedValueException
      */
-    public function testCreateWithInvalidValue($value)
+    public function testCreateWithInvalidId($id)
     {
-        new Pure($value);
+        new Pure($id);
     }
 
 
     /**
      * @return array
      */
-    public function invalidValueProvider()
+    public function invalidIdProvider()
     {
         return [
             [0],
@@ -40,18 +40,18 @@ class PureTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @dataProvider isValueProvider
+     * @dataProvider isIdProvider
      */
-    public function testIsValid($value, $isValid)
+    public function testIsValid($id, $isValid)
     {
-        $this->assertSame(Pure::isValid($value), $isValid);
+        $this->assertSame(Pure::isValid($id), $isValid);
     }
 
 
     /**
      * @return array
      */
-    public function isValueProvider()
+    public function isIdProvider()
     {
         return [
             [0, false],
@@ -70,19 +70,19 @@ class PureTest extends \PHPUnit_Framework_TestCase
         $this->assertSame([
             Pure::FOO => [
                 'name' => Pure::FOO,
-                'value' => Pure::FOO,
+                'id' => Pure::FOO,
             ],
             Pure::BAR => [
                 'name' => Pure::BAR,
-                'value' => Pure::BAR,
+                'id' => Pure::BAR,
             ],
             Pure::ONE => [
                 'name' => Pure::ONE,
-                'value' => Pure::ONE,
+                'id' => Pure::ONE,
             ],
             Pure::TWO => [
                 'name' => Pure::TWO,
-                'value' => Pure::TWO,
+                'id' => Pure::TWO,
             ],
         ], Pure::toArray());
     }
@@ -99,14 +99,14 @@ class PureTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testToValues()
+    public function testToIds()
     {
         $this->assertSame([
             Pure::FOO,
             Pure::BAR,
             Pure::ONE,
             Pure::TWO,
-        ], Pure::toValues());
+        ], Pure::toIds());
     }
 
 

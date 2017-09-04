@@ -20,19 +20,19 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @dataProvider invalidValueProvider
+     * @dataProvider invalidIdProvider
      * @expectedException UnexpectedValueException
      */
-    public function testCreateWithInvalidValue($value)
+    public function testCreateWithInvalidId($id)
     {
-        new WithData($value);
+        new WithData($id);
     }
 
 
     /**
      * @return array
      */
-    public function invalidValueProvider()
+    public function invalidIdProvider()
     {
         return [
             [0],
@@ -43,18 +43,18 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
 
 
     /**
-     * @dataProvider isValueProvider
+     * @dataProvider isIdProvider
      */
-    public function testIsValid($value, $isValid)
+    public function testIsValid($id, $isValid)
     {
-        $this->assertSame(WithData::isValid($value), $isValid);
+        $this->assertSame(WithData::isValid($id), $isValid);
     }
 
 
     /**
      * @return array
      */
-    public function isValueProvider()
+    public function isIdProvider()
     {
         return [
             [0, false],
@@ -70,22 +70,22 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
             WithData::ONE => [
                 'name' => 'One',
                 'number' => 101,
-                'value' => WithData::ONE,
+                'id' => WithData::ONE,
             ],
             WithData::TWO => [
                 'name' => 'Two',
                 'number' => 102,
-                'value' => WithData::TWO,
+                'id' => WithData::TWO,
             ],
             WithData::THREE => [
                 'name' => 'Three',
                 'number' => 103,
-                'value' => WithData::THREE,
+                'id' => WithData::THREE,
             ],
             WithData::ONE2 => [
                 'name' => 'One2',
                 'number' => 101,
-                'value' => WithData::ONE2,
+                'id' => WithData::ONE2,
             ],
         ], WithData::toArray());
     }
@@ -102,14 +102,14 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testToValues()
+    public function testToIds()
     {
         $this->assertSame([
             WithData::ONE,
             WithData::TWO,
             WithData::THREE,
             WithData::ONE2,
-        ], WithData::toValues());
+        ], WithData::toIds());
     }
 
 
@@ -127,9 +127,9 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider filterProvider
      */
-    public function testFilter($filter, $values)
+    public function testFilter($filter, $ids)
     {
-        $this->assertSame(WithData::toValues($filter), $values);
+        $this->assertSame(WithData::toIds($filter), $ids);
     }
 
 
@@ -147,10 +147,10 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
             [[['<=', 'number', 102]], [1, 2, 10]],
             [[['>=', 'number', 102]], [2, 3]],
             [[['>=', 'number', 101], ['<', 'number', 103]], [1, 2, 10]],
-            [['number' => 101, 'value' => 1], [1]],
+            [['number' => 101, 'id' => 1], [1]],
             [['number' => 13], []],
             [[['in', 'number', [101, 102]]], [1, 2, 10]],
-            [[['in', 'value', [2, 3]]], [2, 3]],
+            [[['in', 'id', [2, 3]]], [2, 3]],
             [[['in', 'number', [1, 2]]], []],
         ];
     }

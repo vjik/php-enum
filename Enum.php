@@ -5,7 +5,7 @@ namespace vjik\enum;
 /**
  * Abstract Enum class
  *
- * @property mixed $value
+ * @property mixed $id
  * @property mixed $name
  */
 abstract class Enum
@@ -21,7 +21,7 @@ abstract class Enum
     /**
      * @var mixed
      */
-    protected $value;
+    protected $id;
 
 
     /**
@@ -31,16 +31,16 @@ abstract class Enum
 
 
     /**
-     * @param mixed $value
+     * @param mixed $id
      *
      * @throws \UnexpectedValueException
      */
-    public function __construct($value)
+    public function __construct($id)
     {
-        if (!static::isValid($value)) {
-            throw new \UnexpectedValueException("Value '$value' is not part of the enum " . get_called_class());
+        if (!static::isValid($id)) {
+            throw new \UnexpectedValueException("Value '$id' is not part of the enum " . get_called_class());
         }
-        foreach (static::toArray()[$value] as $k => $v) {
+        foreach (static::toArray()[$id] as $k => $v) {
             $this->$k = $v;
         }
     }
@@ -49,14 +49,14 @@ abstract class Enum
     /**
      * Проверяет входит ли значение в допустимые
      *
-     * @param $value
+     * @param $id
      * @param $filter
      *
      * @return bool
      */
-    public static function isValid($value, array $filter = [])
+    public static function isValid($id, array $filter = [])
     {
-        return in_array($value, static::toValues($filter), true);
+        return in_array($id, static::toIds($filter), true);
     }
 
 
@@ -85,7 +85,7 @@ abstract class Enum
                 if (!isset($items[$constant]['name'])) {
                     $items[$constant]['name'] = $constant;
                 }
-                $items[$constant]['value'] = $constant;
+                $items[$constant]['id'] = $constant;
             }
             static::$_cache[$class] = $items;
         }
@@ -154,13 +154,13 @@ abstract class Enum
      *
      * @return array
      */
-    public static function toValues(array $filter = [])
+    public static function toIds(array $filter = [])
     {
-        $values = [];
+        $ids = [];
         foreach (static::toArray($filter) as $item) {
-            $values[] = $item['value'];
+            $ids[] = $item['id'];
         }
-        return $values;
+        return $ids;
     }
 
 
@@ -191,7 +191,7 @@ abstract class Enum
     public static function toObjects(array $filter = [])
     {
         $objects = [];
-        foreach (static::toValues($filter) as $id) {
+        foreach (static::toIds($filter) as $id) {
             $objects[$id] = new static($id);
         }
         return $objects;
@@ -222,6 +222,6 @@ abstract class Enum
      */
     public function __toString()
     {
-        return (string)$this->value;
+        return (string)$this->id;
     }
 }
