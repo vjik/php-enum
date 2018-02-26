@@ -2,70 +2,65 @@
 
 namespace vjik\enum;
 
+use LogicException;
+use ReflectionException;
+use UnexpectedValueException;
+
 /**
  * Abstract Enum class
- *
  * @property mixed $id
  * @property mixed $name
  */
 abstract class Enum
 {
 
-
     /**
      * @var array
      */
     protected static $_cache = [];
 
-
     /**
-     * @var mixed
+     * @var int|string
      */
     protected $id;
-
 
     /**
      * @var string
      */
     protected $name;
 
-
     /**
-     * @param mixed $id
-     *
-     * @throws \UnexpectedValueException
+     * @param int|string $id
+     * @throws UnexpectedValueException
+     * @throws ReflectionException
      */
     public function __construct($id)
     {
         if (!static::isValid($id)) {
-            throw new \UnexpectedValueException("Value '$id' is not part of the enum " . get_called_class());
+            throw new UnexpectedValueException("Value '$id' is not part of the enum " . get_called_class());
         }
         foreach (static::toArray()[$id] as $k => $v) {
             $this->$k = $v;
         }
     }
 
-
     /**
      * Проверяет входит ли значение в допустимые
-     *
-     * @param $id
-     * @param $filter
-     *
+     * @param int|string $id
+     * @param array $filter
      * @return bool
+     * @throws ReflectionException
      */
     public static function isValid($id, array $filter = [])
     {
         return in_array($id, static::toIds($filter), true);
     }
 
-
     /**
      * Все доступные значения в виде массива с данными
-     *
      * @param array $filter ['key' => 'value', ['operator', 'key', 'value'], …]
-     *
      * @return array enum-значение - ключ, массив с данными - значение
+     * @throws ReflectionException
      */
     public static function toArray(array $filter = [])
     {
@@ -146,13 +141,11 @@ abstract class Enum
         return $items;
     }
 
-
     /**
      * Все доступные значения в виде массива
-     *
      * @param array $filter
-     *
      * @return array
+     * @throws ReflectionException
      */
     public static function toIds(array $filter = [])
     {
@@ -163,13 +156,11 @@ abstract class Enum
         return $ids;
     }
 
-
     /**
      * Все доступные значение с именами
-     *
      * @param array $filter
-     *
      * @return array enum-значение - ключ, имя - значение
+     * @throws ReflectionException
      */
     public static function toList(array $filter = [])
     {
@@ -180,13 +171,11 @@ abstract class Enum
         return $list;
     }
 
-
     /**
      * Все доступные значения в виде объектов
-     *
      * @param array $filter
-     *
      * @return array
+     * @throws ReflectionException
      */
     public static function toObjects(array $filter = [])
     {
@@ -197,13 +186,10 @@ abstract class Enum
         return $objects;
     }
 
-
     /**
-     * @param $name
-     *
+     * @param string $name
      * @return mixed
-     *
-     * @throws \LogicException
+     * @throws LogicException
      */
     public function __get($name)
     {
@@ -213,9 +199,8 @@ abstract class Enum
         } elseif (property_exists($this, $name)) {
             return $this->{$name};
         }
-        throw new \LogicException('Getting unknown property: ' . get_class($this) . '::' . $name);
+        throw new LogicException('Getting unknown property: ' . get_class($this) . '::' . $name);
     }
-
 
     /**
      * @return string
