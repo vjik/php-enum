@@ -1,7 +1,7 @@
 {
     "name": "vjik/php-enum",
     "description": "PHP 5.4+ Enum implementation",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "type": "library",
     "keywords": [
         "php",

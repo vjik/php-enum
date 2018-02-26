@@ -17,7 +17,12 @@ abstract class Enum
     /**
      * @var array
      */
-    protected static $_cache = [];
+    protected static $_cacheItems = [];
+
+    /**
+     * @var array
+     */
+    protected static $_cacheInstances = [];
 
     /**
      * @var int|string
@@ -45,6 +50,22 @@ abstract class Enum
     }
 
     /**
+     * @param int|string $id
+     * @return static
+     * @throws ReflectionException
+     * @throws UnexpectedValueException
+     * @since 2.1.0
+     */
+    public static function get($id)
+    {
+        $key = get_called_class() . '~' . $id;
+        if (empty(static::$_cacheInstances[$key])) {
+            static::$_cacheInstances[$key] = new static($id);
+        }
+        return static::$_cacheInstances[$key];
+    }
+
+    /**
      * Проверяет входит ли значение в допустимые
      * @param int|string $id
      * @param array $filter
@@ -65,7 +86,7 @@ abstract class Enum
     public static function toArray(array $filter = [])
     {
         $class = get_called_class();
-        if (!array_key_exists($class, static::$_cache)) {
+        if (!array_key_exists($class, static::$_cacheItems)) {
             $reflection = new \ReflectionClass($class);
             if (is_callable([$class, 'items'])) {
                 /** @noinspection PhpUndefinedMethodInspection */
@@ -82,9 +103,9 @@ abstract class Enum
                 }
                 $items[$constant]['id'] = $constant;
             }
-            static::$_cache[$class] = $items;
+            static::$_cacheItems[$class] = $items;
         }
-        $items = array_filter(static::$_cache[$class], function ($item) use ($filter) {
+        $items = array_filter(static::$_cacheItems[$class], function ($item) use ($filter) {
             foreach ($filter as $key => $filterItem) {
                 if (is_int($key)) {
                     list($operator, $key, $value) = $filterItem;
@@ -181,7 +202,7 @@ abstract class Enum
     {
         $objects = [];
         foreach (static::toIds($filter) as $id) {
-            $objects[$id] = new static($id);
+            $objects[$id] = static::get($id);
         }
         return $objects;
     }
