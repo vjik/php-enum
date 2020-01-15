@@ -42,4 +42,14 @@ class WithData extends Enum
             ],
         ];
     }
+
+    /**
+     * @param array $item
+     * @param int $v
+     * @return bool
+     */
+    public static function numberMore($item, $v)
+    {
+        return $item['number'] > $v;
+    }
 }

@@ -152,6 +152,8 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
             [[['in', 'number', [101, 102]]], [1, 2, 10]],
             [[['in', 'id', [2, 3]]], [2, 3]],
             [[['in', 'number', [1, 2]]], []],
+            [[['numberMore', 101]], [2,3]],
+            [[['numberMore', 102]], [3]],
         ];
     }
 

@@ -105,50 +105,59 @@ abstract class Enum
             }
             static::$_cacheItems[$class] = $items;
         }
-        $items = array_filter(static::$_cacheItems[$class], function ($item) use ($filter) {
+        $items = array_filter(static::$_cacheItems[$class], function ($item) use ($class, $filter) {
             foreach ($filter as $key => $filterItem) {
                 if (is_int($key)) {
-                    list($operator, $key, $value) = $filterItem;
-                    switch ($operator) {
-                        case '=':
-                            if ($item[$key] != $value) {
-                                return false;
-                            }
-                            break;
+                    $operator = $filterItem[0];
+                    if (in_array($operator, ['=', '!=', '>', '<', '>=', '<=', 'in'])) {
+                        $key = $filterItem[1];
+                        $value = $filterItem[2];
+                        switch ($operator) {
+                            case '=':
+                                if ($item[$key] != $value) {
+                                    return false;
+                                }
+                                break;
 
-                        case '!=':
-                            if ($item[$key] == $value) {
-                                return false;
-                            }
-                            break;
+                            case '!=':
+                                if ($item[$key] == $value) {
+                                    return false;
+                                }
+                                break;
 
-                        case '>':
-                            if ($item[$key] <= $value) {
-                                return false;
-                            }
-                            break;
+                            case '>':
+                                if ($item[$key] <= $value) {
+                                    return false;
+                                }
+                                break;
 
-                        case '<':
-                            if ($item[$key] >= $value) {
-                                return false;
-                            }
-                            break;
+                            case '<':
+                                if ($item[$key] >= $value) {
+                                    return false;
+                                }
+                                break;
 
-                        case '>=':
-                            if ($item[$key] < $value) {
-                                return false;
-                            }
-                            break;
+                            case '>=':
+                                if ($item[$key] < $value) {
+                                    return false;
+                                }
+                                break;
 
-                        case '<=':
-                            if ($item[$key] > $value) {
-                                return false;
-                            }
-                            break;
+                            case '<=':
+                                if ($item[$key] > $value) {
+                                    return false;
+                                }
+                                break;
 
-                        case 'in':
-                            return in_array($item[$key], $value, true);
-                            break;
+                            case 'in':
+                                return in_array($item[$key], $value, true);
+                                break;
+                        }
+                    } else {
+                        return call_user_func_array(
+                            [$class, $operator],
+                            array_merge([$item], array_slice($filterItem, 1))
+                        );
                     }
                 } else {
                     $value = $filterItem;
