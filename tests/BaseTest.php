@@ -1,25 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace vjik\enum\tests;
 
+use PHPUnit\Framework\TestCase;
 use vjik\enum\tests\enums\Pure;
 use vjik\enum\tests\enums\WithData;
 use vjik\enum\tests\enums\WithName;
 
-class EnumTest extends \PHPUnit_Framework_TestCase
+final class BaseTest extends TestCase
 {
-    protected $pure;
-    protected $withName;
-    protected $withData;
+    protected Pure $pure;
+    protected WithName $withName;
+    protected WithData $withData;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->pure = new Pure(Pure::FOO);
         $this->withName = new WithName(WithName::FOO);
         $this->withData = new WithData(WithData::ONE);
     }
 
-    public function testGetId()
+    public function testGetId(): void
     {
         $this->assertEquals(Pure::FOO, $this->pure->id);
         $this->assertEquals((string)Pure::FOO, $this->pure);
@@ -31,7 +34,7 @@ class EnumTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals((string)WithData::ONE, $this->withData);
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
         $this->assertEquals(Pure::FOO, $this->pure->name);
         $this->assertEquals('Foo Name', $this->withName->name);

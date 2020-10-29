@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace vjik\enum;
 
 use LogicException;
@@ -13,25 +15,14 @@ use UnexpectedValueException;
  */
 abstract class Enum
 {
-
-    /**
-     * @var array
-     */
-    protected static $_cacheItems = [];
-
-    /**
-     * @var array
-     */
-    protected static $_cacheInstances = [];
+    protected static array $cacheItems = [];
+    protected static array $cacheInstances = [];
 
     /**
      * @var int|string
      */
     protected $id;
 
-    /**
-     * @var string
-     */
     protected $name;
 
     /**
@@ -56,13 +47,13 @@ abstract class Enum
      * @throws UnexpectedValueException
      * @since 2.1.0
      */
-    public static function get($id)
+    public static function get($id): self
     {
         $key = get_called_class() . '~' . $id;
-        if (empty(static::$_cacheInstances[$key])) {
-            static::$_cacheInstances[$key] = new static($id);
+        if (empty(static::$cacheInstances[$key])) {
+            static::$cacheInstances[$key] = new static($id);
         }
-        return static::$_cacheInstances[$key];
+        return static::$cacheInstances[$key];
     }
 
     /**
@@ -72,7 +63,7 @@ abstract class Enum
      * @return bool
      * @throws ReflectionException
      */
-    public static function isValid($id, array $filter = [])
+    public static function isValid($id, array $filter = []): bool
     {
         return in_array($id, static::toIds($filter), true);
     }
@@ -83,10 +74,10 @@ abstract class Enum
      * @return array enum-значение - ключ, массив с данными - значение
      * @throws ReflectionException
      */
-    public static function toArray(array $filter = [])
+    public static function toArray(array $filter = []): array
     {
         $class = get_called_class();
-        if (!array_key_exists($class, static::$_cacheItems)) {
+        if (!array_key_exists($class, static::$cacheItems)) {
             $reflection = new \ReflectionClass($class);
             if (is_callable([$class, 'items'])) {
                 /** @noinspection PhpUndefinedMethodInspection */
@@ -103,9 +94,9 @@ abstract class Enum
                 }
                 $items[$constant]['id'] = $constant;
             }
-            static::$_cacheItems[$class] = $items;
+            static::$cacheItems[$class] = $items;
         }
-        $items = array_filter(static::$_cacheItems[$class], function ($item) use ($class, $filter) {
+        $items = array_filter(static::$cacheItems[$class], function ($item) use ($class, $filter) {
             foreach ($filter as $key => $filterItem) {
                 if (is_int($key)) {
                     $operator = $filterItem[0];
@@ -177,7 +168,7 @@ abstract class Enum
      * @return array
      * @throws ReflectionException
      */
-    public static function toIds(array $filter = [])
+    public static function toIds(array $filter = []): array
     {
         $ids = [];
         foreach (static::toArray($filter) as $item) {
@@ -192,7 +183,7 @@ abstract class Enum
      * @return array enum-значение - ключ, имя - значение
      * @throws ReflectionException
      */
-    public static function toList(array $filter = [])
+    public static function toList(array $filter = []): array
     {
         $list = [];
         foreach (static::toArray($filter) as $id => $data) {
@@ -207,7 +198,7 @@ abstract class Enum
      * @return array
      * @throws ReflectionException
      */
-    public static function toObjects(array $filter = [])
+    public static function toObjects(array $filter = []): array
     {
         $objects = [];
         foreach (static::toIds($filter) as $id) {

@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace vjik\enum\tests\enums;
 
 use vjik\enum\Enum;
 
-class Pure extends Enum
+final class Pure extends Enum
 {
     const FOO = 'foo';
     const BAR = 'bar';

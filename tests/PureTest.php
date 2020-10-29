@@ -1,34 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace vjik\enum\tests;
 
+use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
 use vjik\enum\tests\enums\Pure;
 
-class PureTest extends \PHPUnit_Framework_TestCase
+final class PureTest extends TestCase
 {
-    protected $enum;
+    protected Pure $enum;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->enum = new Pure(Pure::FOO);
     }
 
-
-    /**
-     * @dataProvider invalidIdProvider
-     * @expectedException UnexpectedValueException
-     */
-    public function testCreateWithInvalidId($id)
-    {
-        new Pure($id);
-    }
-
-
-    /**
-     * @return array
-     */
-    public function invalidIdProvider()
+    public function dataCreateWithInvalidId(): array
     {
         return [
             [0],
@@ -38,20 +27,18 @@ class PureTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-
     /**
-     * @dataProvider isIdProvider
+     * @dataProvider dataCreateWithInvalidId
+     *
+     * @param mixed $id
      */
-    public function testIsValid($id, $isValid)
+    public function testCreateWithInvalidId($id): void
     {
-        $this->assertSame(Pure::isValid($id), $isValid);
+        $this->expectException(UnexpectedValueException::class);
+        new Pure($id);
     }
 
-
-    /**
-     * @return array
-     */
-    public function isIdProvider()
+    public function dataIsValid(): array
     {
         return [
             [0, false],
@@ -64,8 +51,18 @@ class PureTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @dataProvider dataIsValid
+     *
+     * @param mixed $id
+     * @param bool $isValid
+     */
+    public function testIsValid($id, bool $isValid): void
+    {
+        $this->assertSame(Pure::isValid($id), $isValid);
+    }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $this->assertSame([
             Pure::FOO => [
@@ -88,7 +85,7 @@ class PureTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testToList()
+    public function testToList(): void
     {
         $this->assertSame([
             Pure::FOO => Pure::FOO,
@@ -99,7 +96,7 @@ class PureTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testToIds()
+    public function testToIds(): void
     {
         $this->assertSame([
             Pure::FOO,
@@ -110,7 +107,7 @@ class PureTest extends \PHPUnit_Framework_TestCase
     }
 
 
-    public function testToObjects()
+    public function testToObjects(): void
     {
         $this->assertEquals([
             Pure::FOO => new Pure(Pure::FOO),

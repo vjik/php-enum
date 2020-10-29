@@ -1,34 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace vjik\enum\tests;
 
+use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
 use vjik\enum\tests\enums\WithName;
 
-class WithNameTest extends \PHPUnit_Framework_TestCase
+final class WithNameTest extends TestCase
 {
-    protected $enum;
+    protected WithName $enum;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->enum = new WithName(WithName::FOO);
     }
 
-
-    /**
-     * @dataProvider invalidIdProvider
-     * @expectedException UnexpectedValueException
-     */
-    public function testCreateWithInvalidId($id)
-    {
-        new WithName($id);
-    }
-
-
-    /**
-     * @return array
-     */
-    public function invalidIdProvider()
+    public function dataCreateWithInvalidId(): array
     {
         return [
             [0],
@@ -38,20 +27,17 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-
     /**
-     * @dataProvider isIdProvider
+     * @dataProvider dataCreateWithInvalidId
+     * @param mixed $id
      */
-    public function testIsValid($id, $isValid)
+    public function testCreateWithInvalidId($id): void
     {
-        $this->assertSame(WithName::isValid($id), $isValid);
+        $this->expectException(UnexpectedValueException::class);
+        new WithName($id);
     }
 
-
-    /**
-     * @return array
-     */
-    public function isIdProvider()
+    public function dataIsValid(): array
     {
         return [
             [0, false],
@@ -61,8 +47,18 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @dataProvider dataIsValid
+     *
+     * @param mixed $id
+     * @param bool $isValid
+     */
+    public function testIsValid($id, bool $isValid): void
+    {
+        $this->assertSame(WithName::isValid($id), $isValid);
+    }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $this->assertSame([
             WithName::FOO => [
@@ -76,8 +72,7 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
         ], WithName::toArray());
     }
 
-
-    public function testToList()
+    public function testToList(): void
     {
         $this->assertSame([
             WithName::FOO => 'Foo Name',
@@ -85,8 +80,7 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
         ], WithName::toList());
     }
 
-
-    public function testToIds()
+    public function testToIds(): void
     {
         $this->assertSame([
             WithName::FOO,
@@ -94,8 +88,7 @@ class WithNameTest extends \PHPUnit_Framework_TestCase
         ], WithName::toIds());
     }
 
-
-    public function testToObjects()
+    public function testToObjects(): void
     {
         $this->assertEquals([
             WithName::FOO => new WithName(WithName::FOO),

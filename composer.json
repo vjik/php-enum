@@ -1,6 +1,6 @@
 {
     "name": "vjik/php-enum",
-    "description": "PHP 5.4+ Enum implementation",
+    "description": "PHP Enum implementation",
     "version": "2.2.0",
     "type": "library",
     "keywords": [
@@ -23,11 +23,13 @@
             "vjik\\enum\\": ""
         }
     },
-    "require-dev": {
-        "phpunit/phpunit": "^4.8",
-        "yiisoft/yii2-coding-standards": "2.*"
-    },
     "require": {
-        "php": ">=5.4.0"
+        "php": "^7.4"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.4"
+    },
+    "config": {
+        "sort-packages": true
     }
 }

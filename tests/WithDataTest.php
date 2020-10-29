@@ -1,38 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace vjik\enum\tests;
 
+use PHPUnit\Framework\TestCase;
 use UnexpectedValueException;
 use vjik\enum\tests\enums\WithData;
 
-class WithDataTest extends \PHPUnit_Framework_TestCase
+final class WithDataTest extends TestCase
 {
+    protected WithData $enum;
 
-    /**
-     * @var WithData
-     */
-    protected $enum;
-
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->enum = new WithData(WithData::ONE);
     }
 
-
-    /**
-     * @dataProvider invalidIdProvider
-     * @expectedException UnexpectedValueException
-     */
-    public function testCreateWithInvalidId($id)
-    {
-        new WithData($id);
-    }
-
-
-    /**
-     * @return array
-     */
-    public function invalidIdProvider()
+    public function dataCreateWithInvalidId(): array
     {
         return [
             [0],
@@ -41,20 +26,18 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-
     /**
-     * @dataProvider isIdProvider
+     * @dataProvider dataCreateWithInvalidId
+     *
+     * @param mixed $id
      */
-    public function testIsValid($id, $isValid)
+    public function testCreateWithInvalidId($id): void
     {
-        $this->assertSame(WithData::isValid($id), $isValid);
+        $this->expectException(UnexpectedValueException::class);
+        new WithData($id);
     }
 
-
-    /**
-     * @return array
-     */
-    public function isIdProvider()
+    public function dataIsValid(): array
     {
         return [
             [0, false],
@@ -63,8 +46,18 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
+    /**
+     * @dataProvider dataIsValid
+     *
+     * @param mixed $id
+     * @param bool $isValid
+     */
+    public function testIsValid($id, bool $isValid): void
+    {
+        $this->assertSame(WithData::isValid($id), $isValid);
+    }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $this->assertSame([
             WithData::ONE => [
@@ -90,8 +83,7 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
         ], WithData::toArray());
     }
 
-
-    public function testToList()
+    public function testToList(): void
     {
         $this->assertSame([
             WithData::ONE => 'One',
@@ -101,8 +93,7 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
         ], WithData::toList());
     }
 
-
-    public function testToIds()
+    public function testToIds(): void
     {
         $this->assertSame([
             WithData::ONE,
@@ -112,8 +103,7 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
         ], WithData::toIds());
     }
 
-
-    public function testToObjects()
+    public function testToObjects(): void
     {
         $this->assertEquals([
             WithData::ONE => new WithData(WithData::ONE),
@@ -123,20 +113,7 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
         ], WithData::toObjects());
     }
 
-
-    /**
-     * @dataProvider filterProvider
-     */
-    public function testFilter($filter, $ids)
-    {
-        $this->assertSame(WithData::toIds($filter), $ids);
-    }
-
-
-    /**
-     * @return array
-     */
-    public function filterProvider()
+    public function dataFilter(): array
     {
         return [
             [['number' => 101], [1, 10]],
@@ -152,14 +129,24 @@ class WithDataTest extends \PHPUnit_Framework_TestCase
             [[['in', 'number', [101, 102]]], [1, 2, 10]],
             [[['in', 'id', [2, 3]]], [2, 3]],
             [[['in', 'number', [1, 2]]], []],
-            [[['numberMore', 101]], [2,3]],
+            [[['numberMore', 101]], [2, 3]],
             [[['numberMore', 102]], [3]],
         ];
     }
 
-
-    public function testGetter()
+    /**
+     * @dataProvider dataFilter
+     *
+     * @param array $filter
+     * @param array $ids
+     */
+    public function testFilter(array $filter, array $ids): void
     {
-        $this->assertEquals($this->enum->baseNumber, 1);
+        $this->assertSame(WithData::toIds($filter), $ids);
+    }
+
+    public function testGetter(): void
+    {
+        $this->assertSame($this->enum->baseNumber, 1);
     }
 }

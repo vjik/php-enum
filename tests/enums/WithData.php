@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace vjik\enum\tests\enums;
 
 use vjik\enum\Enum;
@@ -7,21 +9,21 @@ use vjik\enum\Enum;
 /**
  * @property int $baseNumber
  */
-class WithData extends Enum
+final class WithData extends Enum
 {
     const ONE = 1;
     const TWO = 2;
     const THREE = 3;
     const ONE2 = 10;
 
-    protected $number;
+    protected int $number;
 
-    protected function getBaseNumber()
+    protected function getBaseNumber(): int
     {
         return $this->number - 100;
     }
 
-    public static function items()
+    public static function items(): array
     {
         return [
             self::ONE => [
@@ -43,12 +45,7 @@ class WithData extends Enum
         ];
     }
 
-    /**
-     * @param array $item
-     * @param int $v
-     * @return bool
-     */
-    public static function numberMore($item, $v)
+    public static function numberMore(array $item, int $v): bool
     {
         return $item['number'] > $v;
     }
