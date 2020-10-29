@@ -40,4 +40,11 @@ final class BaseTest extends TestCase
         $this->assertEquals('Foo Name', $this->withName->name);
         $this->assertEquals('One', $this->withData->name);
     }
+
+    public function testCreate(): void
+    {
+        $this->assertSame(1, (new Pure(Pure::ONE))->id);
+        $this->assertSame(1, Pure::get(Pure::ONE)->id);
+        $this->assertSame(1, Pure::ONE()->id);
+    }
 }

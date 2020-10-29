@@ -66,20 +66,20 @@ final class PureTest extends TestCase
     {
         $this->assertSame([
             Pure::FOO => [
-                'name' => Pure::FOO,
                 'id' => Pure::FOO,
+                'name' => Pure::FOO,
             ],
             Pure::BAR => [
-                'name' => Pure::BAR,
                 'id' => Pure::BAR,
+                'name' => Pure::BAR,
             ],
             Pure::ONE => [
-                'name' => Pure::ONE,
                 'id' => Pure::ONE,
+                'name' => Pure::ONE,
             ],
             Pure::TWO => [
-                'name' => Pure::TWO,
                 'id' => Pure::TWO,
+                'name' => Pure::TWO,
             ],
         ], Pure::toArray());
     }

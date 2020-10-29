@@ -15,7 +15,7 @@ use UnexpectedValueException;
  */
 abstract class Enum
 {
-    protected static array $cacheItems = [];
+    protected static array $cacheData = [];
     protected static array $cacheInstances = [];
 
     /**
@@ -76,27 +76,10 @@ abstract class Enum
      */
     public static function toArray(array $filter = []): array
     {
-        $class = get_called_class();
-        if (!array_key_exists($class, static::$cacheItems)) {
-            $reflection = new \ReflectionClass($class);
-            if (is_callable([$class, 'items'])) {
-                /** @noinspection PhpUndefinedMethodInspection */
-                $items = $class::items();
-                array_walk($items, function (&$item) {
-                    $item = is_array($item) ? $item : ['name' => $item];
-                });
-            } else {
-                $items = array_fill_keys($reflection->getConstants(), []);
-            }
-            foreach ($reflection->getConstants() as $constant) {
-                if (!isset($items[$constant]['name'])) {
-                    $items[$constant]['name'] = $constant;
-                }
-                $items[$constant]['id'] = $constant;
-            }
-            static::$cacheItems[$class] = $items;
-        }
-        $items = array_filter(static::$cacheItems[$class], function ($item) use ($class, $filter) {
+        $items = array_map(function (array $data) {
+            return $data['item'];
+        }, static::getData());
+        return array_filter($items, function ($item) use ($filter) {
             foreach ($filter as $key => $filterItem) {
                 if (is_int($key)) {
                     $operator = $filterItem[0];
@@ -146,7 +129,7 @@ abstract class Enum
                         }
                     } else {
                         return call_user_func_array(
-                            [$class, $operator],
+                            [get_called_class(), $operator],
                             array_merge([$item], array_slice($filterItem, 1))
                         );
                     }
@@ -159,7 +142,6 @@ abstract class Enum
             }
             return true;
         });
-        return $items;
     }
 
     /**
@@ -207,6 +189,21 @@ abstract class Enum
         return $objects;
     }
 
+    public static function __callStatic($name, $arguments)
+    {
+        if ($name === 'items') {
+            return [];
+        }
+
+        foreach (static::getData() as $id => $data) {
+            if ($data['constantName'] === $name) {
+                return static::get($id);
+            }
+        }
+
+        throw new \RuntimeException();
+    }
+
     /**
      * @param string $name
      * @return mixed
@@ -223,11 +220,42 @@ abstract class Enum
         throw new LogicException('Getting unknown property: ' . get_class($this) . '::' . $name);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    public function __toString(): string
     {
         return (string)$this->id;
+    }
+
+    private static function getData(): array
+    {
+        $class = get_called_class();
+        if (!array_key_exists($class, static::$cacheData)) {
+            $reflection = new \ReflectionClass($class);
+
+            $items = call_user_func([$class, 'items']);
+
+            $data = [];
+            foreach ($reflection->getConstants() as $constantName => $id) {
+                if (array_key_exists($id, $items)) {
+                    $item = is_array($items[$id]) ? $items[$id] : [
+                        'name' => $items[$id],
+                    ];
+                } else {
+                    $item = [];
+                }
+
+                $item['id'] = $id;
+                if (!array_key_exists('name', $item)) {
+                    $item['name'] = $id;
+                }
+
+                $data[$id] = [
+                    'constantName' => $constantName,
+                    'item' => $item,
+                ];
+            }
+
+            static::$cacheData[$class] = $data;
+        }
+        return static::$cacheData[$class];
     }
 }
