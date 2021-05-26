@@ -111,7 +111,7 @@ Returns array of pairs constant names and values.
 Action::toValues(); 
 ```
 
-#### <a name="toObjects"></a> List of objects `toObjects`
+#### <a name="toObjects"></a> List of objects `toObjects()`
 
 Returns array of pairs constant names and objects:
 
@@ -120,7 +120,7 @@ Returns array of pairs constant names and objects:
 Action::toObjects();
 ```
 
-#### <a name="isValid"></a> Validate value `isValid`
+#### <a name="isValid"></a> Validate value `isValid()`
 
 Check if value is valid on the enum set.
 
