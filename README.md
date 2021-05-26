@@ -60,7 +60,7 @@ $process = Status::PROCESS();
 
 ### <a name="extradata"></a>Class with extra data
 
-Set data in protected static function `data()` and create getters using protected method `getPropertyValue()`:
+Set data in the protected static function `data()` and create getters using the protected method `getPropertyValue()`:
 
 ```php
 use Vjik\Enum\Enum;
