@@ -1,33 +1,34 @@
 {
     "name": "vjik/php-enum",
-    "description": "PHP Enum implementation",
-    "version": "2.2.0",
+    "description": "PHP Enum Implementation",
     "type": "library",
     "keywords": [
         "php",
         "enum"
     ],
-    "license": "MIT",
+    "license": "BSD-3-Clause",
     "support": {
         "issues": "https://github.com/vjik/php-enum/issues",
         "source": "https://github.com/vjik/php-enum"
     },
-    "authors": [
-        {
-            "name": "Sergey Predvoditelev",
-            "email": "sergey.predvoditelev@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "vjik\\enum\\": ""
-        }
-    },
+    "minimum-stability": "stable",
     "require": {
-        "php": "^7.4"
+        "php": "^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.4"
+        "infection/infection": "^0.23.0",
+        "phpunit/phpunit": "^9.4",
+        "vimeo/psalm": "^4.7"
+    },
+    "autoload": {
+        "psr-4": {
+            "Vjik\\Enum\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Vjik\\Enum\\Tests\\": "tests"
+        }
     },
     "config": {
         "sort-packages": true

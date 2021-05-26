@@ -1,245 +1,172 @@
-# Реализация перечисляемого типа (enum) на PHP
+# PHP Enum Implementation
 
-Абстрактный класс `Enum` позволяет создавать enum-объекты (см. [перечисляемый тип](https://ru.wikipedia.org/wiki/Перечисляемый_тип)).
+[![Latest Stable Version](https://poser.pugx.org/vjik/php-enum/v/stable.png)](https://packagist.org/packages/vjik/php-enum)
+[![Total Downloads](https://poser.pugx.org/vjik/php-enum/downloads.png)](https://packagist.org/packages/vjik/php-enum)
+[![Build status](https://github.com/vjik/php-enum/workflows/build/badge.svg)](https://github.com/vjik/php-enum/actions?query=workflow%3Abuild)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fvjik%2Fphp-enum%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/vjik/php-enum/master)
+[![static analysis](https://github.com/vjik/php-enum/workflows/static%20analysis/badge.svg)](https://github.com/vjik/php-enum/actions?query=workflow%3A%22static+analysis%22)
 
-- Поддержка [дополнительных данных](#extradata) для значений.
-- Поддержка [геттеров](#getters).
-- Поддержка [фильтрации](#filtering). 
-- Вспомогательные функции ([`toIds`](#toIds), [`toList`](#toList), [`toArray`](#toArray), [`toObjects`](#toObjects), [`isValid`](#isValid)).
+The package provide abstract class `Enum` that intended to create
+[enumerated objects](https://en.wikipedia.org/wiki/Enumerated_type) with support [extra data](#extradata) and 
+auxiliary static functions [`toValues()`](#toList), [`toObjects()`](#toObjects) and [`isValid()`](#isValid).
 
-## Установка
+## Requirements
 
-Рекомендуется установка через [composer](http://getcomposer.org/download/):
+- PHP 8.0 or higher.
 
+## Installation
+
+The package could be installed with composer:
+
+```shell
+composer require vjik/php-enum --prefer-dist
 ```
-composer require vjik/php-enum
-```
 
-## Определение класса
+## General usage
 
-### Вариант 1. Базовый
+### Declaration of class
 
 ```php
-use vjik\enum\Enum;
+use Vjik\Enum\Enum;
 
-class Status extends Enum
+/**
+ * @method static self NEW()
+ * @method static self PROCESS()
+ * @method static self DONE()
+ */
+final class Status extends Enum
 {
-    const DRAFT = 'draft';
-    const PUBLISH = 'publish';
+    public const NEW = 'new';
+    public const PROCESS = 'process';
+    public const DONE = 'done';
 }
 ```
 
-### Вариант 2. С именами
+### Creating an object
 
-Массив с данными задаётся в статической функции `items()`.
+#### By static method `from()`
 
 ```php
-use vjik\enum\Enum;
-
-class Status extends Enum
-{
-    const DRAFT = 'draft';
-    const PUBLISH = 'publish';
-    
-    public static function items()
-    {
-        return [
-            self::DRAFT => 'Черновик',
-            self::PUBLISH => 'Опубликован',
-        ];
-    }
-}
+$process = Status::from('process');
 ```
 
-### Вариант 3. <a name="extradata"></a>С дополнительными данными
+#### By static method with a name identical to the constant name
 
-Для всех дополнительных данных необходимо прописать свойства `proteсted`.
+Static methods are automatically implemented to provide quick access to an enum value.
 
 ```php
-use vjik\enum\Enum;
+$process = Status::PROCESS();
+```
 
-class Status extends Enum
+### <a name="extradata"></a>Class with extra data
+
+Set data in protected static function `data()` and create getters using protected method `getPropertyValue()`:
+
+```php
+use Vjik\Enum\Enum;
+
+/**
+ * @method static self CREATE()
+ * @method static self UPDATE()
+ */
+final class Action extends Enum
 {
-    const DRAFT = 'draft';
-    const PUBLISH = 'publish';
-    
-    protected $priority;
-    
-    public static function items()
+    public const CREATE = 1;
+    public const UPDATE = 2;
+
+    protected static function data(): array
     {
         return [
-            self::DRAFT => [
-                'name' => 'Черновик',
-                'priority' => -10,
+            self::CREATE => [
+                'tip' => 'Create document',
             ],
-            self::PUBLISH => [
-                'name' => 'Опубликован',
-                'priority' => 20,
-            ]
-        ];
-    }
-}
-```
-
-## Создание объекта
-
-Создать объект можно через создание класса или статическую функцию `get`:
-
-```php
-$status = new Status(Status::DRAFT);
-$status = Status::get(Status::DRAFT);
-```
-
-Второй вариант препочтительнее, так как он кэширует объекты и, если объект уже был инициализирован,
-то он будет взят из кэша, а не будет создан заново.
-
-## <a name="toIds"></a>Список значений `toIds`
-
-Возвращает массив значений объекта. Поддерживает [фильтрацию](#filtering). 
-
-```php
-Status::toIds(); // ['draft', 'publish']
-Status::toIds(['priority' => 20]); // ['publish']
-```
-
-## <a name="toList"></a>Список с названиями `toList`
-
-Возвращает массив вида `$id => $name`. Поддерживает [фильтрацию](#filtering).
-
-```php
-Status::toList(); // ['draft' => 'Черновик', 'publish' => 'Опубликован']
-Status::toList(['priority' => 20]); // ['publish' => 'Опубликован']
-```
-
-## <a name="toArray"></a>Массив с данными `toArray`
- 
-Возвращает массив вида:
-
-```php
-[
-    $id => [
-        'id' => $id,
-        'name' => $name,
-        'param1' => $param1,
-        'param2' => $param2,
-        …
-    ],
-    …
-]
-```
-
-Поддерживает [фильтрацию](#filtering).
-
-```php
-Status::toArray();
-Status::toArray(['priority' => 20]); // ['publish' => 'Опубликован']
-```
-
-## <a name="toObjects"></a>Массив объектов `toObjects`
-
-Возвращает массив вида:
-
-```php
-[
-    $id => Enum,
-    …
-]
-```
-
-## <a name="isValid"></a>Проверка значения `isValid`
-
-Проверяет, существует ли значение в перечисляемом типе. Поддерживает [фильтрацию](#filtering).
-
-```php
-Status::isValid('new'); // false
-Status::isValid('publish'); // true
-Status::isValid('publish', [['<', 'priority', 5]]); // false
-```
-
-## <a name="filtering"></a>Фильтрация 
-
-Методы [`toIds`](#toIds), [`toList`](#toList), [`toArray`](#toArray), [`toObjects`](#toObjects), [`isValid`](#isValid) поддерживают фильтрацию. 
-
-Фильтр передаётся в виде массива:
-
-```php
-[
-    $key => $value,
-    [$operator, $key, $value],
-    …
-]
-```
-
-Поддерживаемые операторы: `=`, `!=`, `>`, `<`, `>=`, `<=`, `in`.
-
-В качестве оператора можно использовать статическую функцию объекта. В функцию будут переданые все элементы массива за исключением оператора. Например:
-
-```php
-// Фильтр
-[['numberMore', 102]]
-
-// Функция в объекте
-public static function numberMore($item, $v)
-{
-    return $item['number'] > $v;
-}
-```
-
-### Оператор `in`
-
-Проверяет, что значение соответствует одному из значений, указанных в массиве `$value`. Например:
-
-```php
-[
-   Status::isValid('publish', [['in', 'priority', [5, 10]]]); 
-   Status::isValid('closed', [['in', 'id', ['publish', 'closed', 'draft']]]); 
-]
-```
-
-## <a name="getters"></a>Геттеры
-
-Геттер — это метод, чьё название начинается со слова `get`. Часть названия после `get` определяет имя свойства.
-Например, геттер `getAbsPriority` определяет свойство `absPriority`, как показано в коде ниже:
-
-```php
-use vjik\enum\Enum;
-
-class Status extends Enum
-{
-    const DRAFT = 'draft';
-    const PUBLISH = 'publish';
-    
-    protected $priority;
-    
-    protected function getAbsPriority()
-    {
-        return abs($this->priority);
-    }
-    
-    public static function items()
-    {
-        return [
-            self::DRAFT => [
-                'name' => Черновик',
-                'priority' => -10,
+            self::UPDATE => [
+                'tip' => 'Update document',
             ],
-            self::PUBLISH => [
-                'name' => 'Опубликован',
-                'priority' => 20,
-            ]
         ];
     }
-}
 
-$status = new Status(Status::DRAFT);
-echo $status->absPriority; // 10
+    public function getTip(): string
+    {
+        /** @var string */
+        return $this->getPropertyValue('tip');
+    }
+}
 ```
 
-## Преобразование в строку
-
-Объект поддерживает преобразование в строку (магический метод `__toString`). Возвращается значение в виде строки.
+Usage:
 
 ```php
-$status = new Status(Status::DRAFT);
-echo $status; // draft
+echo Action::CREATE()->getTip();
 ```
+
+### Auxiliary static functions
+
+#### <a name="toValues"></a> List of values `toValues()`
+
+Returns array of pairs constant names and values.
+
+```php
+// ['CREATE' => 1, 'UPDATE' => 2]
+Action::toValues(); 
+```
+
+#### <a name="toObjects"></a> List of objects `toObjects`
+
+Returns array of pairs constant names and objects:
+
+```php
+// ['CREATE' => $createObject, 'UPDATE' => $updateObject]
+Action::toObjects();
+```
+
+#### <a name="isValid"></a> Validate value `isValid`
+
+Check if value is valid on the enum set.
+
+```php
+Action::isValid(1); // true
+Action::isValid(99); // false
+```
+
+### Casting to string
+
+`Enum` support casting to string (using magic method `__toString`). The value is returned as a string.
+
+```php
+echo Status::DONE(); // done
+```
+
+## Testing
+
+### Unit testing
+
+The package is tested with [PHPUnit](https://phpunit.de/). To run tests:
+
+```shell
+./vendor/bin/phpunit
+```
+
+### Mutation testing
+
+The package tests are checked with [Infection](https://infection.github.io/) mutation framework. To run it:
+
+```shell
+./vendor/bin/infection
+```
+
+### Static analysis
+
+The code is statically analyzed with [Psalm](https://psalm.dev/). To run static analysis:
+
+```shell
+./vendor/bin/psalm
+```
+
+## License
+
+The PHP Enum implementation is free software. It is released under the terms of the BSD License. Please see [`LICENSE`](./LICENSE.md) for more information.
+
+## Credits
+
+Version 3 of this package is inspired by [`myclabs/php-enum`](https://github.com/myclabs/php-enum). 
