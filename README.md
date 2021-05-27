@@ -89,8 +89,8 @@ use Vjik\Enum\Enum;
  */
 final class Action extends Enum
 {
-    public const CREATE = 1;
-    public const UPDATE = 2;
+    private const CREATE = 1;
+    private const UPDATE = 2;
 
     protected static function data(): array
     {
