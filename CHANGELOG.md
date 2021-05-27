@@ -1,5 +1,17 @@
 # PHP Enum Implementation Change Log
 
+## 4.0.0 May 27, 2021
+
+Implement ideas from [RFC Enumerations](https://wiki.php.net/rfc/enumerations):
+
+- New: Add protected method `match()`.
+- New: Add factory method `tryFrom()`.
+- New: Add method `getName()`.
+- Chg: Remove immutability objects.
+- Chg: Rename methods `toObjects()` to `cases()` and `toValues()` to `values()`.
+- Chg: Use private constants in enum object.
+- Chg: On create object via method `from()` with invalid value throws `ValueError` instead `UnexpectedValueException`.
+
 ## 3.0.0 May 26, 2021
 
 - Chg: Rewrite the package from scratch.
