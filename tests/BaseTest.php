@@ -6,7 +6,7 @@ namespace Vjik\Enum\Tests;
 
 use BadMethodCallException;
 use PHPUnit\Framework\TestCase;
-use UnexpectedValueException;
+use ValueError;
 use Vjik\Enum\Tests\Support\Pure;
 use Vjik\Enum\Tests\Support\WithData;
 
@@ -31,7 +31,7 @@ final class BaseTest extends TestCase
 
     public function testCreateWithInvalidValue(): void
     {
-        $this->expectException(UnexpectedValueException::class);
+        $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Value \'9\' is not part of the enum Vjik\Enum\Tests\Support\Pure.');
         Pure::from(9);
     }

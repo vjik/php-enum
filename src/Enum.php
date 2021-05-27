@@ -7,7 +7,7 @@ namespace Vjik\Enum;
 use BadMethodCallException;
 use ReflectionClass;
 use ReflectionClassConstant;
-use UnexpectedValueException;
+use ValueError;
 
 use function constant;
 use function defined;
@@ -30,7 +30,7 @@ abstract class Enum
     final protected function __construct(mixed $value)
     {
         if (!self::isValid($value)) {
-            throw new UnexpectedValueException("Value '$value' is not part of the enum " . static::class . '.');
+            throw new ValueError("Value '$value' is not part of the enum " . static::class . '.');
         }
 
         $this->value = $value;
