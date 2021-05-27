@@ -70,15 +70,15 @@ abstract class Enum
         return clone self::$instances[$class][$name];
     }
 
-    final public static function toValues(): array
+    final public static function values(): array
     {
-        return self::getEnumValues();
+        return array_values(self::getEnumValues());
     }
 
     /**
      * @return static[]
      */
-    final public static function toObjects(): array
+    final public static function cases(): array
     {
         $class = static::class;
 
@@ -87,11 +87,11 @@ abstract class Enum
          * @var string $key
          * @var mixed $value
          */
-        foreach (self::toValues() as $key => $value) {
+        foreach (self::getEnumValues() as $key => $value) {
             if (isset(self::$instances[$class][$key])) {
-                $objects[$key] = clone self::$instances[$class][$key];
+                $objects[] = clone self::$instances[$class][$key];
             } else {
-                $objects[$key] = self::$instances[$class][$key] = new static($value);
+                $objects[] = self::$instances[$class][$key] = new static($value);
             }
         }
 
@@ -100,7 +100,7 @@ abstract class Enum
 
     final public static function isValid(mixed $value): bool
     {
-        return in_array($value, static::toValues(), true);
+        return in_array($value, static::getEnumValues(), true);
     }
 
     /**

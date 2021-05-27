@@ -88,38 +88,33 @@ final class BaseTest extends TestCase
         self::assertSame($expected, Pure::isValid($value));
     }
 
-    public function testToValues(): void
+    public function testValues(): void
     {
         self::assertSame(
-            [
-                'FOO' => 'foo',
-                'BAR' => 'bar',
-                'ONE' => 1,
-                'TWO' => 2,
-            ],
-            Pure::toValues()
+            ['foo', 'bar', 1, 2],
+            Pure::values(),
         );
     }
 
-    public function testToObjects(): void
+    public function testCases(): void
     {
-        $objects = Pure::toObjects();
+        $objects = Pure::cases();
 
-        self::assertSame(['FOO', 'BAR', 'ONE', 'TWO'], array_keys($objects));
-        self::assertInstanceOf(Pure::class, $objects['FOO']);
-        self::assertInstanceOf(Pure::class, $objects['BAR']);
-        self::assertInstanceOf(Pure::class, $objects['ONE']);
-        self::assertInstanceOf(Pure::class, $objects['TWO']);
-        self::assertSame('foo', $objects['FOO']->getValue());
-        self::assertSame('bar', $objects['BAR']->getValue());
-        self::assertSame(1, $objects['ONE']->getValue());
-        self::assertSame(2, $objects['TWO']->getValue());
+        self::assertCount(4, $objects);
+        self::assertInstanceOf(Pure::class, $objects[0]);
+        self::assertInstanceOf(Pure::class, $objects[1]);
+        self::assertInstanceOf(Pure::class, $objects[2]);
+        self::assertInstanceOf(Pure::class, $objects[3]);
+        self::assertSame('foo', $objects[0]->getValue());
+        self::assertSame('bar', $objects[1]->getValue());
+        self::assertSame(1, $objects[2]->getValue());
+        self::assertSame(2, $objects[3]->getValue());
     }
 
-    public function testImmutabilityToObjects(): void
+    public function testImmutabilityCases(): void
     {
-        $objects1 = Pure::toObjects();
-        $objects2 = Pure::toObjects();
+        $objects1 = Pure::cases();
+        $objects2 = Pure::cases();
 
         self::assertNotSame($objects1, $objects2);
     }
