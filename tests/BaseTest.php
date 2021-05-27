@@ -18,6 +18,11 @@ final class BaseTest extends TestCase
         self::assertSame('foo', $foo->getValue());
     }
 
+    public function testImmutabilityCreateViaFrom(): void
+    {
+        self::assertSame(Pure::from(1), Pure::from(1));
+    }
+
     public function testCreateViaFunction(): void
     {
         $foo = Pure::FOO();
@@ -26,7 +31,7 @@ final class BaseTest extends TestCase
 
     public function testImmutabilityCreateViaFunction(): void
     {
-        self::assertNotSame(Pure::FOO(), Pure::FOO());
+        self::assertSame(Pure::FOO(), Pure::FOO());
     }
 
     public function testCreateWithInvalidValue(): void
@@ -116,6 +121,6 @@ final class BaseTest extends TestCase
         $objects1 = Pure::cases();
         $objects2 = Pure::cases();
 
-        self::assertNotSame($objects1, $objects2);
+        self::assertSame($objects1, $objects2);
     }
 }

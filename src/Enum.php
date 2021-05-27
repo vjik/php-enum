@@ -28,10 +28,6 @@ abstract class Enum
 
     final protected function __construct(mixed $value)
     {
-        if (!self::isValid($value)) {
-            throw new ValueError("Value '$value' is not part of the enum " . static::class . '.');
-        }
-
         $this->value = $value;
     }
 
@@ -50,7 +46,7 @@ abstract class Enum
      */
     final public static function from(mixed $value): self
     {
-        return new static($value);
+        return static::getInstanceByValue($value);
     }
 
     /**
@@ -65,9 +61,9 @@ abstract class Enum
                 $message = "No static method or enum constant '$name' in class " . static::class . '.';
                 throw new BadMethodCallException($message);
             }
-            return self::$instances[$class][$name] = new static($enumValues[$name]);
+            self::$instances[$class][$name] = new static($enumValues[$name]);
         }
-        return clone self::$instances[$class][$name];
+        return self::$instances[$class][$name];
     }
 
     final public static function values(): array
@@ -83,16 +79,12 @@ abstract class Enum
         $class = static::class;
 
         $objects = [];
-        /**
-         * @var string $key
-         * @var mixed $value
-         */
+        /** @var mixed $value */
         foreach (self::getEnumValues() as $key => $value) {
-            if (isset(self::$instances[$class][$key])) {
-                $objects[] = clone self::$instances[$class][$key];
-            } else {
-                $objects[] = self::$instances[$class][$key] = new static($value);
+            if (!isset(self::$instances[$class][$key])) {
+                self::$instances[$class][$key] = new static($value);
             }
+            $objects[] = self::$instances[$class][$key];
         }
 
         return $objects;
@@ -117,6 +109,29 @@ abstract class Enum
         return static::data()[$this->value][$key] ?? $default;
     }
 
+    /**
+     * @return static
+     */
+    private static function getInstanceByValue(mixed $value): self
+    {
+        $class = static::class;
+
+        /** @var mixed $enumValue */
+        foreach (self::getEnumValues() as $key => $enumValue) {
+            if ($enumValue === $value) {
+                if (!isset(self::$instances[$class][$key])) {
+                    self::$instances[$class][$key] = new static($value);
+                }
+                return self::$instances[$class][$key];
+            }
+        }
+
+        throw new ValueError("Value '$value' is not part of the enum " . static::class . '.');
+    }
+
+    /**
+     * @psalm-return array<string,mixed>
+     */
     private static function getEnumValues(): array
     {
         $class = static::class;
