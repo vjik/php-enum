@@ -6,7 +6,7 @@
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fvjik%2Fphp-enum%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/vjik/php-enum/master)
 [![static analysis](https://github.com/vjik/php-enum/workflows/static%20analysis/badge.svg)](https://github.com/vjik/php-enum/actions?query=workflow%3A%22static+analysis%22)
 
-The package provide abstract class `Enum` that intended to create
+The package implement ideas from [RFC Enumerations](https://wiki.php.net/rfc/enumerations) and provide abstract class `Enum` that intended to create
 [enumerated objects](https://en.wikipedia.org/wiki/Enumerated_type) with support [extra data](#extradata) and auxiliary static functions [`values()`](#values), [`cases()`](#cases) and [`isValid()`](#isValid).
 
 ## Requirements
