@@ -19,8 +19,8 @@ final class Pure extends Enum
     private const ONE = 1;
     private const TWO = 2;
 
-    public function getName(): mixed
+    public function getLabel(): mixed
     {
-        return $this->getPropertyValue('name');
+        return $this->getPropertyValue('label');
     }
 }

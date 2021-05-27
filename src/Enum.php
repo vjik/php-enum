@@ -14,6 +14,7 @@ use function in_array;
 
 abstract class Enum
 {
+    private string $name;
     private mixed $value;
 
     /**
@@ -26,9 +27,15 @@ abstract class Enum
      */
     private static array $instances = [];
 
-    final protected function __construct(mixed $value)
+    final protected function __construct(string $name, mixed $value)
     {
+        $this->name = $name;
         $this->value = $value;
+    }
+
+    final public function getName(): string
+    {
+        return $this->name;
     }
 
     final public function getValue(): mixed
@@ -61,7 +68,7 @@ abstract class Enum
                 $message = "No static method or enum constant '$name' in class " . static::class . '.';
                 throw new BadMethodCallException($message);
             }
-            self::$instances[$class][$name] = new static($enumValues[$name]);
+            self::$instances[$class][$name] = new static($name, $enumValues[$name]);
         }
         return self::$instances[$class][$name];
     }
@@ -82,7 +89,7 @@ abstract class Enum
         /** @var mixed $value */
         foreach (self::getEnumValues() as $key => $value) {
             if (!isset(self::$instances[$class][$key])) {
-                self::$instances[$class][$key] = new static($value);
+                self::$instances[$class][$key] = new static($key, $value);
             }
             $objects[] = self::$instances[$class][$key];
         }
@@ -120,7 +127,7 @@ abstract class Enum
         foreach (self::getEnumValues() as $key => $enumValue) {
             if ($enumValue === $value) {
                 if (!isset(self::$instances[$class][$key])) {
-                    self::$instances[$class][$key] = new static($value);
+                    self::$instances[$class][$key] = new static($key, $value);
                 }
                 return self::$instances[$class][$key];
             }

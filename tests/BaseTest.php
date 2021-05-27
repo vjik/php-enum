@@ -15,6 +15,7 @@ final class BaseTest extends TestCase
     public function testCreateViaFrom(): void
     {
         $foo = Pure::from('foo');
+        self::assertSame('FOO', $foo->getName());
         self::assertSame('foo', $foo->getValue());
     }
 
@@ -26,6 +27,7 @@ final class BaseTest extends TestCase
     public function testCreateViaFunction(): void
     {
         $foo = Pure::FOO();
+        self::assertSame('FOO', $foo->getName());
         self::assertSame('foo', $foo->getValue());
     }
 
@@ -59,19 +61,19 @@ final class BaseTest extends TestCase
     public function testGetData(): void
     {
         $one = WithData::ONE();
-        self::assertSame('One', $one->getName());
+        self::assertSame('One', $one->getLabel());
     }
 
     public function testGetNotExistsData(): void
     {
         $three = WithData::THREE();
-        self::assertNull($three->getName());
+        self::assertNull($three->getLabel());
     }
 
     public function testGetDataWithoutData(): void
     {
         $two = Pure::TWO();
-        self::assertNull($two->getName());
+        self::assertNull($two->getLabel());
     }
 
     public function dataIsValid(): array

@@ -21,19 +21,19 @@ final class WithData extends Enum
     {
         return [
             self::ONE => [
-                'name' => 'One',
+                'label' => 'One',
                 'number' => 101,
             ],
             self::TWO => [
-                'name' => 'Two',
+                'label' => 'Two',
                 'number' => 102,
             ],
         ];
     }
 
-    public function getName(): ?string
+    public function getLabel(): ?string
     {
-        return $this->getPropertyValue('name');
+        return $this->getPropertyValue('label');
     }
 
     public function getNumber(): ?int
