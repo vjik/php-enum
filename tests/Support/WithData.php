@@ -13,31 +13,47 @@ use Vjik\Enum\Enum;
  */
 final class WithData extends Enum
 {
-    public const ONE = 1;
-    public const TWO = 2;
-    public const THREE = 3;
+    private const ONE = 1;
+    private const TWO = 2;
+    private const THREE = 3;
 
     protected static function data(): array
     {
         return [
             self::ONE => [
-                'name' => 'One',
+                'label' => 'One',
                 'number' => 101,
             ],
             self::TWO => [
-                'name' => 'Two',
+                'label' => 'Two',
                 'number' => 102,
             ],
         ];
     }
 
-    public function getName(): ?string
+    public function getLabel(): ?string
     {
-        return $this->getPropertyValue('name');
+        return $this->getPropertyValue('label');
     }
 
     public function getNumber(): ?int
     {
         return $this->getPropertyValue('number');
+    }
+
+    public function getColor(): ?string
+    {
+        return $this->match([
+            self::ONE => 'red',
+            self::TWO => 'blue',
+        ]);
+    }
+
+    public function getCode(): string
+    {
+        return $this->match([
+            self::ONE => 'x',
+            self::TWO => 'y',
+        ], 'unknown');
     }
 }

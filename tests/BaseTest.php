@@ -6,7 +6,7 @@ namespace Vjik\Enum\Tests;
 
 use BadMethodCallException;
 use PHPUnit\Framework\TestCase;
-use UnexpectedValueException;
+use ValueError;
 use Vjik\Enum\Tests\Support\Pure;
 use Vjik\Enum\Tests\Support\WithData;
 
@@ -14,24 +14,37 @@ final class BaseTest extends TestCase
 {
     public function testCreateViaFrom(): void
     {
-        $foo = Pure::from(Pure::FOO);
-        self::assertSame(Pure::FOO, $foo->getValue());
+        $foo = Pure::from('foo');
+        self::assertSame('FOO', $foo->getName());
+        self::assertSame('foo', $foo->getValue());
+    }
+
+    public function testImmutabilityCreateViaFrom(): void
+    {
+        self::assertSame(Pure::from(1), Pure::from(1));
     }
 
     public function testCreateViaFunction(): void
     {
         $foo = Pure::FOO();
-        self::assertSame(Pure::FOO, $foo->getValue());
+        self::assertSame('FOO', $foo->getName());
+        self::assertSame('foo', $foo->getValue());
     }
 
     public function testImmutabilityCreateViaFunction(): void
     {
-        self::assertNotSame(Pure::FOO(), Pure::FOO());
+        self::assertSame(Pure::FOO(), Pure::FOO());
+    }
+
+    public function testCreateViaTryFrom(): void
+    {
+        self::assertSame(Pure::FOO(), Pure::tryFrom('foo'));
+        self::assertNull(Pure::tryFrom('not-exists'));
     }
 
     public function testCreateWithInvalidValue(): void
     {
-        $this->expectException(UnexpectedValueException::class);
+        $this->expectException(ValueError::class);
         $this->expectExceptionMessage('Value \'9\' is not part of the enum Vjik\Enum\Tests\Support\Pure.');
         Pure::from(9);
     }
@@ -54,19 +67,27 @@ final class BaseTest extends TestCase
     public function testGetData(): void
     {
         $one = WithData::ONE();
-        self::assertSame('One', $one->getName());
+        self::assertSame('One', $one->getLabel());
     }
 
     public function testGetNotExistsData(): void
     {
         $three = WithData::THREE();
-        self::assertNull($three->getName());
+        self::assertNull($three->getLabel());
     }
 
     public function testGetDataWithoutData(): void
     {
         $two = Pure::TWO();
-        self::assertNull($two->getName());
+        self::assertNull($two->getLabel());
+    }
+
+    public function testMatch(): void
+    {
+        $this->assertSame('red', WithData::ONE()->getColor());
+        $this->assertNull(WithData::THREE()->getColor());
+        $this->assertSame('x', WithData::ONE()->getCode());
+        $this->assertSame('unknown', WithData::THREE()->getCode());
     }
 
     public function dataIsValid(): array
@@ -88,39 +109,34 @@ final class BaseTest extends TestCase
         self::assertSame($expected, Pure::isValid($value));
     }
 
-    public function testToValues(): void
+    public function testValues(): void
     {
         self::assertSame(
-            [
-                'FOO' => Pure::FOO,
-                'BAR' => Pure::BAR,
-                'ONE' => Pure::ONE,
-                'TWO' => Pure::TWO,
-            ],
-            Pure::toValues()
+            ['foo', 'bar', 1, 2],
+            Pure::values(),
         );
     }
 
-    public function testToObjects(): void
+    public function testCases(): void
     {
-        $objects = Pure::toObjects();
+        $objects = Pure::cases();
 
-        self::assertSame(['FOO', 'BAR', 'ONE', 'TWO'], array_keys($objects));
-        self::assertInstanceOf(Pure::class, $objects['FOO']);
-        self::assertInstanceOf(Pure::class, $objects['BAR']);
-        self::assertInstanceOf(Pure::class, $objects['ONE']);
-        self::assertInstanceOf(Pure::class, $objects['TWO']);
-        self::assertSame(Pure::FOO, $objects['FOO']->getValue());
-        self::assertSame(Pure::BAR, $objects['BAR']->getValue());
-        self::assertSame(Pure::ONE, $objects['ONE']->getValue());
-        self::assertSame(Pure::TWO, $objects['TWO']->getValue());
+        self::assertCount(4, $objects);
+        self::assertInstanceOf(Pure::class, $objects[0]);
+        self::assertInstanceOf(Pure::class, $objects[1]);
+        self::assertInstanceOf(Pure::class, $objects[2]);
+        self::assertInstanceOf(Pure::class, $objects[3]);
+        self::assertSame('foo', $objects[0]->getValue());
+        self::assertSame('bar', $objects[1]->getValue());
+        self::assertSame(1, $objects[2]->getValue());
+        self::assertSame(2, $objects[3]->getValue());
     }
 
-    public function testImmutabilityToObjects(): void
+    public function testImmutabilityCases(): void
     {
-        $objects1 = Pure::toObjects();
-        $objects2 = Pure::toObjects();
+        $objects1 = Pure::cases();
+        $objects2 = Pure::cases();
 
-        self::assertNotSame($objects1, $objects2);
+        self::assertSame($objects1, $objects2);
     }
 }

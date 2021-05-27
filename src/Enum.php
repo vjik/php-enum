@@ -7,14 +7,14 @@ namespace Vjik\Enum;
 use BadMethodCallException;
 use ReflectionClass;
 use ReflectionClassConstant;
-use UnexpectedValueException;
+use ValueError;
 
-use function constant;
-use function defined;
+use function array_key_exists;
 use function in_array;
 
 abstract class Enum
 {
+    private string $name;
     private mixed $value;
 
     /**
@@ -27,13 +27,15 @@ abstract class Enum
      */
     private static array $instances = [];
 
-    final protected function __construct(mixed $value)
+    final protected function __construct(string $name, mixed $value)
     {
-        if (!self::isValid($value)) {
-            throw new UnexpectedValueException("Value '$value' is not part of the enum " . static::class . '.');
-        }
-
+        $this->name = $name;
         $this->value = $value;
+    }
+
+    final public function getName(): string
+    {
+        return $this->name;
     }
 
     final public function getValue(): mixed
@@ -51,7 +53,20 @@ abstract class Enum
      */
     final public static function from(mixed $value): self
     {
-        return new static($value);
+        $object = static::getInstanceByValue($value);
+        if ($object === null) {
+            throw new ValueError("Value '$value' is not part of the enum " . static::class . '.');
+        }
+
+        return $object;
+    }
+
+    /**
+     * @return static|self
+     */
+    final public static function tryFrom(mixed $value): ?self
+    {
+        return static::getInstanceByValue($value);
     }
 
     /**
@@ -61,46 +76,35 @@ abstract class Enum
     {
         $class = static::class;
         if (!isset(self::$instances[$class][$name])) {
-            $constant = $class . '::' . $name;
-            if (!defined($constant)) {
+            $enumValues = static::getEnumValues();
+            if (!array_key_exists($name, $enumValues)) {
                 $message = "No static method or enum constant '$name' in class " . static::class . '.';
                 throw new BadMethodCallException($message);
             }
-            return self::$instances[$class][$name] = new static(constant($constant));
+            self::$instances[$class][$name] = new static($name, $enumValues[$name]);
         }
-        return clone self::$instances[$class][$name];
+        return self::$instances[$class][$name];
     }
 
-    final public static function toValues(): array
+    final public static function values(): array
     {
-        $class = static::class;
-
-        if (!isset(static::$cache[$class])) {
-            /** @psalm-suppress TooManyArguments Remove this after fix https://github.com/vimeo/psalm/issues/5837 */
-            static::$cache[$class] = (new ReflectionClass($class))->getConstants(ReflectionClassConstant::IS_PUBLIC);
-        }
-
-        return static::$cache[$class];
+        return array_values(self::getEnumValues());
     }
 
     /**
      * @return static[]
      */
-    final public static function toObjects(): array
+    final public static function cases(): array
     {
         $class = static::class;
 
         $objects = [];
-        /**
-         * @var string $key
-         * @var mixed $value
-         */
-        foreach (self::toValues() as $key => $value) {
-            if (isset(self::$instances[$class][$key])) {
-                $objects[$key] = clone self::$instances[$class][$key];
-            } else {
-                $objects[$key] = self::$instances[$class][$key] = new static($value);
+        /** @var mixed $value */
+        foreach (self::getEnumValues() as $key => $value) {
+            if (!isset(self::$instances[$class][$key])) {
+                self::$instances[$class][$key] = new static($key, $value);
             }
+            $objects[] = self::$instances[$class][$key];
         }
 
         return $objects;
@@ -108,7 +112,7 @@ abstract class Enum
 
     final public static function isValid(mixed $value): bool
     {
-        return in_array($value, static::toValues(), true);
+        return in_array($value, static::getEnumValues(), true);
     }
 
     /**
@@ -123,5 +127,46 @@ abstract class Enum
     {
         /** @psalm-suppress MixedArrayOffset */
         return static::data()[$this->value][$key] ?? $default;
+    }
+
+    final protected function match(array $data, mixed $default = null): mixed
+    {
+        /** @psalm-suppress MixedArrayOffset */
+        return $data[$this->value] ?? $default;
+    }
+
+    /**
+     * @return static|null
+     */
+    private static function getInstanceByValue(mixed $value): ?self
+    {
+        $class = static::class;
+
+        /** @var mixed $enumValue */
+        foreach (self::getEnumValues() as $key => $enumValue) {
+            if ($enumValue === $value) {
+                if (!isset(self::$instances[$class][$key])) {
+                    self::$instances[$class][$key] = new static($key, $value);
+                }
+                return self::$instances[$class][$key];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @psalm-return array<string,mixed>
+     */
+    private static function getEnumValues(): array
+    {
+        $class = static::class;
+
+        if (!isset(static::$cache[$class])) {
+            /** @psalm-suppress TooManyArguments Remove this after fix https://github.com/vimeo/psalm/issues/5837 */
+            static::$cache[$class] = (new ReflectionClass($class))->getConstants(ReflectionClassConstant::IS_PRIVATE);
+        }
+
+        return static::$cache[$class];
     }
 }
