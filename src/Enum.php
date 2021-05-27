@@ -129,6 +129,12 @@ abstract class Enum
         return static::data()[$this->value][$key] ?? $default;
     }
 
+    final protected function match(array $data, mixed $default = null): mixed
+    {
+        /** @psalm-suppress MixedArrayOffset */
+        return $data[$this->value] ?? $default;
+    }
+
     /**
      * @return static|null
      */

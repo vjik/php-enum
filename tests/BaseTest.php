@@ -82,6 +82,14 @@ final class BaseTest extends TestCase
         self::assertNull($two->getLabel());
     }
 
+    public function testMatch(): void
+    {
+        $this->assertSame('red', WithData::ONE()->getColor());
+        $this->assertNull(WithData::THREE()->getColor());
+        $this->assertSame('x', WithData::ONE()->getCode());
+        $this->assertSame('unknown', WithData::THREE()->getCode());
+    }
+
     public function dataIsValid(): array
     {
         return [

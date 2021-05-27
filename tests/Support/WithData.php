@@ -40,4 +40,20 @@ final class WithData extends Enum
     {
         return $this->getPropertyValue('number');
     }
+
+    public function getColor(): ?string
+    {
+        return $this->match([
+            self::ONE => 'red',
+            self::TWO => 'blue',
+        ]);
+    }
+
+    public function getCode(): string
+    {
+        return $this->match([
+            self::ONE => 'x',
+            self::TWO => 'y',
+        ], 'unknown');
+    }
 }
