@@ -7,8 +7,7 @@
 [![static analysis](https://github.com/vjik/php-enum/workflows/static%20analysis/badge.svg)](https://github.com/vjik/php-enum/actions?query=workflow%3A%22static+analysis%22)
 
 The package provide abstract class `Enum` that intended to create
-[enumerated objects](https://en.wikipedia.org/wiki/Enumerated_type) with support [extra data](#extradata) and 
-auxiliary static functions [`toValues()`](#toList), [`toObjects()`](#toObjects) and [`isValid()`](#isValid).
+[enumerated objects](https://en.wikipedia.org/wiki/Enumerated_type) with support [extra data](#extradata) and auxiliary static functions [`values()`](#values), [`cases()`](#cases) and [`isValid()`](#isValid).
 
 ## Requirements
 
@@ -36,9 +35,9 @@ use Vjik\Enum\Enum;
  */
 final class Status extends Enum
 {
-    public const NEW = 'new';
-    public const PROCESS = 'process';
-    public const DONE = 'done';
+    private const NEW = 'new';
+    private const PROCESS = 'process';
+    private const DONE = 'done';
 }
 ```
 
@@ -50,6 +49,17 @@ final class Status extends Enum
 $process = Status::from('process');
 ```
 
+On create object with invalid value throws `ValueError`.
+
+#### By static method `tryFrom()`
+
+```php
+$process = Status::tryFrom('process'); // Status object with value "process"
+$process = Status::tryFrom('not-exists'); // null
+```
+
+On create object with invalid value returns `null`.
+
 #### By static method with a name identical to the constant name
 
 Static methods are automatically implemented to provide quick access to an enum value.
@@ -58,9 +68,17 @@ Static methods are automatically implemented to provide quick access to an enum 
 $process = Status::PROCESS();
 ```
 
+### Getting value and name
+
+```php
+Status::DONE()->getName(); // DONE
+Status::DONE()->getValue(); // done
+```
+
 ### <a name="extradata"></a>Class with extra data
 
-Set data in the protected static function `data()` and create getters using the protected method `getPropertyValue()`:
+Set data in the protected static function `data()` and create getters using the protected method `getPropertyValue()`.
+Also you can create getter using protected method `match()`.
 
 ```php
 use Vjik\Enum\Enum;
@@ -91,6 +109,21 @@ final class Action extends Enum
         /** @var string */
         return $this->getPropertyValue('tip');
     }
+    
+    public function getColor(): string
+    {
+        return $this->match([
+            self::CREATE => 'red',
+            self::UPDATE => 'blue',
+        ]);
+    }
+    
+    public function getCode(): int
+    {
+        return $this->match([
+            self::CREATE => 1,
+        ], 99);
+    }
 }
 ```
 
@@ -98,26 +131,28 @@ Usage:
 
 ```php
 echo Action::CREATE()->getTip();
+echo Action::CREATE()->getColor();
+echo Action::CREATE()->getCode();
 ```
 
 ### Auxiliary static functions
 
-#### <a name="toValues"></a> List of values `toValues()`
+#### <a name="values"></a> List of values `values()`
 
-Returns array of pairs constant names and values.
+Returns list of values.
 
 ```php
-// ['CREATE' => 1, 'UPDATE' => 2]
-Action::toValues(); 
+// [1, 2]
+Action::values(); 
 ```
 
-#### <a name="toObjects"></a> List of objects `toObjects()`
+#### <a name="cases"></a> List of objects `cases()`
 
-Returns array of pairs constant names and objects:
+Returns list of objects:
 
 ```php
-// ['CREATE' => $createObject, 'UPDATE' => $updateObject]
-Action::toObjects();
+// [$createObject, $updateObject]
+Action::cases();
 ```
 
 #### <a name="isValid"></a> Validate value `isValid()`
