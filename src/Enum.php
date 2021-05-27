@@ -62,7 +62,7 @@ abstract class Enum
     }
 
     /**
-     * @return static|self
+     * @return static|null
      */
     final public static function tryFrom(mixed $value): ?self
     {
