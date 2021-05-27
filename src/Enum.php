@@ -9,8 +9,7 @@ use ReflectionClass;
 use ReflectionClassConstant;
 use ValueError;
 
-use function constant;
-use function defined;
+use function array_key_exists;
 use function in_array;
 
 abstract class Enum
@@ -61,26 +60,19 @@ abstract class Enum
     {
         $class = static::class;
         if (!isset(self::$instances[$class][$name])) {
-            $constant = $class . '::' . $name;
-            if (!defined($constant)) {
+            $enumValues = static::getEnumValues();
+            if (!array_key_exists($name, $enumValues)) {
                 $message = "No static method or enum constant '$name' in class " . static::class . '.';
                 throw new BadMethodCallException($message);
             }
-            return self::$instances[$class][$name] = new static(constant($constant));
+            return self::$instances[$class][$name] = new static($enumValues[$name]);
         }
         return clone self::$instances[$class][$name];
     }
 
     final public static function toValues(): array
     {
-        $class = static::class;
-
-        if (!isset(static::$cache[$class])) {
-            /** @psalm-suppress TooManyArguments Remove this after fix https://github.com/vimeo/psalm/issues/5837 */
-            static::$cache[$class] = (new ReflectionClass($class))->getConstants(ReflectionClassConstant::IS_PUBLIC);
-        }
-
-        return static::$cache[$class];
+        return self::getEnumValues();
     }
 
     /**
@@ -123,5 +115,17 @@ abstract class Enum
     {
         /** @psalm-suppress MixedArrayOffset */
         return static::data()[$this->value][$key] ?? $default;
+    }
+
+    private static function getEnumValues(): array
+    {
+        $class = static::class;
+
+        if (!isset(static::$cache[$class])) {
+            /** @psalm-suppress TooManyArguments Remove this after fix https://github.com/vimeo/psalm/issues/5837 */
+            static::$cache[$class] = (new ReflectionClass($class))->getConstants(ReflectionClassConstant::IS_PRIVATE);
+        }
+
+        return static::$cache[$class];
     }
 }

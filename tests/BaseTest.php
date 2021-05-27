@@ -14,14 +14,14 @@ final class BaseTest extends TestCase
 {
     public function testCreateViaFrom(): void
     {
-        $foo = Pure::from(Pure::FOO);
-        self::assertSame(Pure::FOO, $foo->getValue());
+        $foo = Pure::from('foo');
+        self::assertSame('foo', $foo->getValue());
     }
 
     public function testCreateViaFunction(): void
     {
         $foo = Pure::FOO();
-        self::assertSame(Pure::FOO, $foo->getValue());
+        self::assertSame('foo', $foo->getValue());
     }
 
     public function testImmutabilityCreateViaFunction(): void
@@ -92,10 +92,10 @@ final class BaseTest extends TestCase
     {
         self::assertSame(
             [
-                'FOO' => Pure::FOO,
-                'BAR' => Pure::BAR,
-                'ONE' => Pure::ONE,
-                'TWO' => Pure::TWO,
+                'FOO' => 'foo',
+                'BAR' => 'bar',
+                'ONE' => 1,
+                'TWO' => 2,
             ],
             Pure::toValues()
         );
@@ -110,10 +110,10 @@ final class BaseTest extends TestCase
         self::assertInstanceOf(Pure::class, $objects['BAR']);
         self::assertInstanceOf(Pure::class, $objects['ONE']);
         self::assertInstanceOf(Pure::class, $objects['TWO']);
-        self::assertSame(Pure::FOO, $objects['FOO']->getValue());
-        self::assertSame(Pure::BAR, $objects['BAR']->getValue());
-        self::assertSame(Pure::ONE, $objects['ONE']->getValue());
-        self::assertSame(Pure::TWO, $objects['TWO']->getValue());
+        self::assertSame('foo', $objects['FOO']->getValue());
+        self::assertSame('bar', $objects['BAR']->getValue());
+        self::assertSame(1, $objects['ONE']->getValue());
+        self::assertSame(2, $objects['TWO']->getValue());
     }
 
     public function testImmutabilityToObjects(): void

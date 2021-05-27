@@ -13,9 +13,9 @@ use Vjik\Enum\Enum;
  */
 final class WithData extends Enum
 {
-    public const ONE = 1;
-    public const TWO = 2;
-    public const THREE = 3;
+    private const ONE = 1;
+    private const TWO = 2;
+    private const THREE = 3;
 
     protected static function data(): array
     {

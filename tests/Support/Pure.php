@@ -14,10 +14,10 @@ use Vjik\Enum\Enum;
  */
 final class Pure extends Enum
 {
-    public const FOO = 'foo';
-    public const BAR = 'bar';
-    public const ONE = 1;
-    public const TWO = 2;
+    private const FOO = 'foo';
+    private const BAR = 'bar';
+    private const ONE = 1;
+    private const TWO = 2;
 
     public function getName(): mixed
     {
