@@ -53,6 +53,19 @@ abstract class Enum
      */
     final public static function from(mixed $value): self
     {
+        $object = static::getInstanceByValue($value);
+        if ($object === null) {
+            throw new ValueError("Value '$value' is not part of the enum " . static::class . '.');
+        }
+
+        return $object;
+    }
+
+    /**
+     * @return static|self
+     */
+    final public static function tryFrom(mixed $value): ?self
+    {
         return static::getInstanceByValue($value);
     }
 
@@ -117,9 +130,9 @@ abstract class Enum
     }
 
     /**
-     * @return static
+     * @return static|null
      */
-    private static function getInstanceByValue(mixed $value): self
+    private static function getInstanceByValue(mixed $value): ?self
     {
         $class = static::class;
 
@@ -133,7 +146,7 @@ abstract class Enum
             }
         }
 
-        throw new ValueError("Value '$value' is not part of the enum " . static::class . '.');
+        return null;
     }
 
     /**

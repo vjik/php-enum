@@ -36,6 +36,12 @@ final class BaseTest extends TestCase
         self::assertSame(Pure::FOO(), Pure::FOO());
     }
 
+    public function testCreateViaTryFrom(): void
+    {
+        self::assertSame(Pure::FOO(), Pure::tryFrom('foo'));
+        self::assertNull(Pure::tryFrom('not-exists'));
+    }
+
     public function testCreateWithInvalidValue(): void
     {
         $this->expectException(ValueError::class);
